@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
 
     this.router.events
       .pipe(
+        // takeUntil(this.unsubscribe$),
+        filter(evt => evt instanceof NavigationEnd),
         map(() => this.activatedRoute),
         map(route => {
           while (route.firstChild) { route = route.firstChild; }
@@ -33,9 +35,9 @@ export class AppComponent implements OnInit {
         filter(route => route.outlet === 'primary'),
         mergeMap(route => route.data)
       )
-      .subscribe(data => {
+      .subscribe(event => {
         // 路由data的标题
-        const { title, module, power } = data;
+        const { title, module, power } = event;
         if (title && module) {
           this.menuList.forEach(p => p.isSelect = false);
           const menu = { title, module, power, isSelect: true };
